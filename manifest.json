@@ -4,7 +4,7 @@
     "scripts": ["js/background.js"],
     "persistent": false
   },
-  "version": "0.5.1",
+  "version": "0.5.2",
   "manifest_version": 2,
   "description": "This extension displays the number of unread articles in your Tiny Tiny RSS installation",
   "options_page": "options.html",
