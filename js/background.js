@@ -158,13 +158,48 @@ function timeout() {
   prefs_last_updated = prefs_updated;
 }
 
+function is_newtab(url) {
+	return url.indexOf('chrome://newtab/') == 0;
+}
+
+function is_site_url(url) {
+    var site_url = localStorage['site_url'];
+	return url.indexOf(site_url) == 0;
+}
+
 function init() {
   chrome.browserAction.onClicked.addListener(function() {
     var site_url = localStorage['site_url'];
 
     if (site_url) {
-      chrome.tabs.create({url: site_url});
-    }
+      // try to find already opened tab
+      chrome.tabs.query({currentWindow: true}, function(tabs) {
+
+        var found_existing = false;
+
+        for (var i = 0, tab; tab = tabs[i]; i++) {
+          if (tab.url && is_site_url(tab.url)) {
+            chrome.tabs.update(tab.id, {highlighted: true});
+            update();
+            found_existing = true;
+            return;
+          }
+        }
+
+        // check if current tab is newtab (only if not updated yet)
+        if (!found_existing) {
+          chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
+            if (tabs[0].url && is_newtab(tabs[0].url)) {
+              chrome.tabs.update(tabs[0].id, {url: site_url});
+            } else {
+              chrome.tabs.create({url: site_url});
+            }
+          });
+        } // (if (!found_existing))
+
+      });
+
+    } // if (site_url)
   });
 
   // TODO: Create smarter algorithm that sets `periodInMinutes` to
