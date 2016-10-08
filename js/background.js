@@ -62,7 +62,7 @@ function update() {
 
         if (unread > 0) {
           icon.path = 'images/alert.png';
-          title.title = 'You have %s unread articles.'.replace('%s', unread);
+          title.title = '%s unread articles'.replace('%s', unread);
 
           if (show_fresh && fresh > 0) {
             badge.text = fresh + '';
@@ -78,7 +78,7 @@ function update() {
 
           title.title = 'Error: %s.'.replace('%s', errorMsg.trim());
         } else {
-          title.title = 'You have no unread articles.';
+          title.title = 'No unread articles';
         }
 
         localStorage['last_updated'] = d.getTime();
@@ -87,7 +87,7 @@ function update() {
         localStorage['last_error'] = xhr.responseText;
 
         icon.path = 'images/error.png';
-        title.title = 'Error (%s) while updating.'.replace('%s', xhr.status);
+        title.title = 'Error (%s) while updating'.replace('%s', xhr.status);
       }
 
       if (!show_badge) badge.text = '';
