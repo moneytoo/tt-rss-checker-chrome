@@ -1,7 +1,6 @@
 /* Handle showing of new item count and polling the TT-RSS server. */
 
 var last_updated = 0;
-var feeds_last_updated = 0;
 var prefs_last_updated = 0;
 
 function param_escape(arg) {
@@ -9,21 +8,6 @@ function param_escape(arg) {
     return encodeURIComponent(arg);
   else
     return escape(arg);
-}
-
-function update_feeds() {
-  console.log('feeds update');
-
-  var requestUrl = localStorage['site_url'] +
-    '/public.php?op=globalUpdateFeeds';
-
-  var xhr = new XMLHttpRequest();
-
-  xhr.open('POST', requestUrl, true);
-  xhr.send();
-
-  var d = new Date();
-  localStorage['last_feeds_updated'] = d.getTime();
 }
 
 function update() {
@@ -138,18 +122,6 @@ function timeout() {
     last_updated = d.getTime();
     try {
       update();
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-
-  if (localStorage['update_feeds'] == 1 &&
-      (d.getTime() > feeds_last_updated + feeds_update_interval ||
-       prefs_updated != prefs_last_updated)) {
-    feeds_last_updated = d.getTime();
-
-    try {
-      update_feeds();
     } catch (e) {
       console.warn(e);
     }

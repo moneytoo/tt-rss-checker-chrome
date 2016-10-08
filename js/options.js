@@ -34,7 +34,6 @@ function save() {
   localStorage['show_badge'] = (f.show_badge.checked) ? '1' : '0';
   localStorage['show_fresh'] = (f.show_fresh.checked) ? '1' : '0';
   localStorage['single_user'] = (f.single_user.checked) ? '1' : '0';
-  localStorage['update_feeds'] = (f.update_feeds.checked) ? '1' : '0';
 
   var d = new Date();
 
@@ -84,11 +83,6 @@ function init() {
   else
     f.single_user.checked = false;
 
-  if (localStorage['update_feeds'])
-    f.update_feeds.checked = localStorage['update_feeds'] == '1';
-  else
-    f.update_feeds.checked = false;
-
   single_user_toggle();
 
   var last_updated = $('last_updated');
@@ -98,12 +92,6 @@ function init() {
   d.setTime(localStorage['last_updated']);
 
   last_updated.innerHTML = d;
-
-  var feeds_last_updated = $('feeds-last-updated');
-
-  d.setTime(localStorage['last_feeds_updated']);
-
-  feeds_last_updated.innerHTML = d;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
