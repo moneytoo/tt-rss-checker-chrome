@@ -41,8 +41,7 @@ function update() {
       badge.text = '';
       badge_color.color = [0, 0, 0, 0];
 
-      var show_badge = localStorage['show_badge'] == '1';
-      var show_fresh = localStorage['show_fresh'] == '1';
+      var badge_type = localStorage['badge_type'];
 
       if (xhr.status == 200) {
         var response = xhr.responseText.split(';');
@@ -64,7 +63,7 @@ function update() {
           icon.path = 'images/alert.png';
           title.title = '%s unread articles'.replace('%s', unread);
 
-          if (show_fresh && fresh > 0) {
+          if (badge_type == '2' && fresh > 0) {
             badge.text = fresh + '';
             badge_color.color = [0, 200, 0, 255];
           } else {
@@ -90,7 +89,7 @@ function update() {
         title.title = 'Error (%s) while updating'.replace('%s', xhr.status);
       }
 
-      if (!show_badge) badge.text = '';
+      if (badge_type == '0') badge.text = '';
 
       chrome.browserAction.setBadgeBackgroundColor(badge_color);
       chrome.browserAction.setBadgeText(badge);

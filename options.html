@@ -20,7 +20,7 @@ div#status {
 }
 
 label {
-	width : 250px;
+	width : 200px;
 	display : block;
 	float : left;
 	text-align : right;
@@ -50,7 +50,7 @@ fieldset span.note {
 
 	<form name="options" id="options">
 		<fieldset>
-			<label>URL of your Tiny Tiny RSS installation:</label>
+			<label>Tiny Tiny RSS URL:</label>
 			<input name="site_url" size="60" value=""/>
 		</fieldset>
 
@@ -70,13 +70,12 @@ fieldset span.note {
 		</fieldset>
 
 		<fieldset>
-			<label>Show badge:</label>
-			<input name="show_badge" type="checkbox"  value="1"/>
-		</fieldset>
-
-		<fieldset>
-			<label>Badge shows fresh articles:</label>
-			<input name="show_fresh" type="checkbox"  value="1"/>
+			<label>Badge (article counter):</label>
+			<select name="badge_type">
+				<option value="0">Disabled</option>
+				<option value="1">All articles</option>
+				<option value="2">Fresh articles</option>
+			</select>
 		</fieldset>
 
 		<input type="submit" value="Save"/>

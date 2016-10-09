@@ -31,9 +31,8 @@ function save() {
     new Effect.Highlight(f.update_interval);
   }
 
-  localStorage['show_badge'] = (f.show_badge.checked) ? '1' : '0';
-  localStorage['show_fresh'] = (f.show_fresh.checked) ? '1' : '0';
   localStorage['single_user'] = (f.single_user.checked) ? '1' : '0';
+  localStorage['badge_type'] = f.badge_type.value;
 
   var d = new Date();
 
@@ -68,20 +67,15 @@ function init() {
   else
     f.update_interval.value = '15';
 
-  if (localStorage['show_badge'])
-    f.show_badge.checked = localStorage['show_badge'] == '1';
-  else
-    f.show_badge.checked = true;
-
-  if (localStorage['show_fresh'])
-    f.show_fresh.checked = localStorage['show_fresh'] == '1';
-  else
-    f.show_fresh.checked = false;
-
   if (localStorage['single_user'])
     f.single_user.checked = localStorage['single_user'] == '1';
   else
     f.single_user.checked = false;
+
+  if (localStorage['badge_type'])
+    f.badge_type.value = localStorage['badge_type'];
+  else
+    f.badge_type.value = '1';
 
   single_user_toggle();
 
