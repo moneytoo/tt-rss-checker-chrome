@@ -11,7 +11,7 @@ function param_escape(arg) {
 }
 
 function update() {
-  console.log('update');
+  //console.log('update');
 
   var d = new Date();
   var login = localStorage['login'];

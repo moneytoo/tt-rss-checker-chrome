@@ -20,7 +20,7 @@ div#status {
 }
 
 label {
-	width : 200px;
+	/*width : 200px;*/
 	display : block;
 	float : left;
 	text-align : right;
@@ -38,48 +38,40 @@ fieldset span.note {
 </style>
 
 <body>
-	<div class="floatingLogo"><img src="images/icon_128.png"></div>
-
-	<h1>Tiny Tiny RSS Checker</h1>
-
 	<p class='last-updated'>Last update: <span id="last_updated">N/A</span></p>
 
-	<div style='display : none' id="status"></div>
-
-	<h2>Options</h2>
-
-	<form name="options" id="options">
+	<div name="options" id="options">
 		<fieldset>
-			<label>Tiny Tiny RSS URL:</label>
-			<input name="site_url" size="60" value=""/>
+			<label>Tiny Tiny RSS URL: <input id="site_url" size="32" value=""/></label>
 		</fieldset>
 
 		<fieldset>
-			<label>Login:</label>
-			<input name="login" size="30" value=""/>
+			<label>Login: <input id="login" size="20" value=""/></label>
 		</fieldset>
 
 		<fieldset>
-			<label>Single-user mode:</label>
-			<input name="single_user" type="checkbox"  value="1"/>
+			<label>Single-user mode: <input id="single_user" type="checkbox"  value="1"/></label>
 		</fieldset>
 
 		<fieldset>
-			<label>Update interval (in minutes):</label>
-			<input name="update_interval" size="30" value=""/>
+			<label>Update interval (in minutes): <input id="update_interval" size="5" value=""/></label>
 		</fieldset>
 
 		<fieldset>
-			<label>Badge (article counter):</label>
-			<select name="badge_type">
-				<option value="0">Disabled</option>
-				<option value="1">All articles</option>
-				<option value="2">Fresh articles</option>
-			</select>
+			<label>Badge (article counter): <select id="badge_type">
+					<option value="0">Disabled</option>
+					<option value="1">All articles</option>
+					<option value="2">Fresh articles</option>
+				</select>
+			</label>
 		</fieldset>
 
-		<input type="submit" value="Save"/>
-	</form>
+		<button id="save">Save</button>
+	</div>
+
+	<p>
+		<div style='display : none' id="status"></div>
+	</p>
 
 	<p>Copyright &copy; 2010-2012
 		<a target="_blank" href="http://tt-rss.org">Andrew Dolgov</a>. 

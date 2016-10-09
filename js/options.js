@@ -1,38 +1,35 @@
 /* Option handling. */
 
 function save() {
-
   var s = $('status');
 
   s.innerHTML = 'Options saved successfully.';
 
-  var f = document.forms['options'];
-
-  if (f.site_url.value.length > 0)
-    localStorage['site_url'] = f.site_url.value;
+  if (document.getElementById('site_url').value.length > 0)
+    localStorage['site_url'] = document.getElementById('site_url').value;
   else {
     s.innerHTML = 'Error: Site url cannot be blank.';
-    new Effect.Highlight(f.site_url);
+    new Effect.Highlight(document.getElementById('site_url'));
   }
 
-  if (f.login.value.length > 0)
-    localStorage['login'] = f.login.value;
+  if (document.getElementById('login').value.length > 0)
+    localStorage['login'] = document.getElementById('login').value;
   else {
     s.innerHTML = 'Error: Login cannot be blank.';
-    new Effect.Highlight(f.login);
+    new Effect.Highlight(document.getElementById('login'));
   }
 
-  var update_interval = parseInt(f.update_interval.value);
+  var update_interval = parseInt(document.getElementById('update_interval').value);
 
   if (update_interval > 0)
-    localStorage['update_interval'] = f.update_interval.value;
+    localStorage['update_interval'] = document.getElementById('update_interval').value;
   else {
     s.innerHTML = 'Error: Update interval must be greater than zero.';
-    new Effect.Highlight(f.update_interval);
+    new Effect.Highlight(document.getElementById('update_interval'));
   }
 
-  localStorage['single_user'] = (f.single_user.checked) ? '1' : '0';
-  localStorage['badge_type'] = f.badge_type.value;
+  localStorage['single_user'] = (document.getElementById('single_user').checked) ? '1' : '0';
+  localStorage['badge_type'] = document.getElementById('badge_type').value;
 
   var d = new Date();
 
@@ -44,38 +41,34 @@ function save() {
 }
 
 function single_user_toggle() {
-  var f = document.forms['options'];
-
-  f.login.disabled = f.single_user.checked;
+  document.getElementById('login').disabled = document.getElementById('single_user').checked;
 }
 
 function init() {
-  var f = document.forms['options'];
-
   if (localStorage['site_url'])
-    f.site_url.value = localStorage['site_url'];
+    document.getElementById('site_url').value = localStorage['site_url'];
   else
-    f.site_url.value = 'http://example.dom/tt-rss/';
+    document.getElementById('site_url').value = 'http://example.dom/tt-rss/';
 
   if (localStorage['login'])
-    f.login.value = localStorage['login'];
+    document.getElementById('login').value = localStorage['login'];
   else
-    f.login.value = 'user';
+    document.getElementById('login').value = 'admin';
 
   if (localStorage['update_interval'])
-    f.update_interval.value = localStorage['update_interval'];
+    document.getElementById('update_interval').value = localStorage['update_interval'];
   else
-    f.update_interval.value = '15';
+    document.getElementById('update_interval').value = '5';
 
   if (localStorage['single_user'])
-    f.single_user.checked = localStorage['single_user'] == '1';
+    document.getElementById('single_user').checked = localStorage['single_user'] == '1';
   else
-    f.single_user.checked = false;
+    document.getElementById('single_user').checked = false;
 
   if (localStorage['badge_type'])
-    f.badge_type.value = localStorage['badge_type'];
+    document.getElementById('badge_type').value = localStorage['badge_type'];
   else
-    f.badge_type.value = '1';
+    document.getElementById('badge_type').value = '1';
 
   single_user_toggle();
 
@@ -89,8 +82,8 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('options').addEventListener('submit', save);
-  document.querySelectorAll('input[name$="single_user"]')[0].addEventListener(
+  document.getElementById('save').addEventListener('click', save);
+  document.querySelectorAll('input[id$="single_user"]')[0].addEventListener(
     'change', single_user_toggle);
   init();
 });
