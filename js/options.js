@@ -48,7 +48,7 @@ function init() {
   if (localStorage['site_url'])
     document.getElementById('site_url').value = localStorage['site_url'];
   else
-    document.getElementById('site_url').value = 'http://example.dom/tt-rss/';
+    document.getElementById('site_url').value = 'http://example.com/tt-rss/';
 
   if (localStorage['login'])
     document.getElementById('login').value = localStorage['login'];
