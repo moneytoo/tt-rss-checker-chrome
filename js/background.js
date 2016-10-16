@@ -3,6 +3,30 @@
 var last_updated = 0;
 var prefs_last_updated = 0;
 
+var site_url;
+var login;
+var update_interval;
+var single_user;
+var badge_type;
+
+function load_options() {
+  chrome.storage.sync.get({
+    site_url: null,
+    login: 'admin',
+    update_interval: 5,
+    single_user: false,
+    badge_type: '1',
+  }, function(items) {
+    site_url = items.site_url;
+    login = items.login;
+    update_interval = items.update_interval;
+    single_user = items.single_user;
+    badge_type = items.badge_type;
+
+    init();
+  });
+}
+
 function param_escape(arg) {
   if (typeof encodeURIComponent != 'undefined')
     return encodeURIComponent(arg);
@@ -14,12 +38,10 @@ function update() {
   //console.log('update');
 
   var d = new Date();
-  var login = localStorage['login'];
-  var single_user = localStorage['single_user'];
 
-  if (single_user == '1') login = 'admin';
+  if (single_user) login = 'admin';
 
-  var requestUrl = localStorage['site_url'] + '/public.php';
+  var requestUrl = site_url + '/public.php';
   var params = 'op=getUnread&fresh=1&login=' + param_escape(login);
 
   var xhr = new XMLHttpRequest();
@@ -40,8 +62,6 @@ function update() {
       title.title = '';
       badge.text = '';
       badge_color.color = [0, 0, 0, 0];
-
-      var badge_type = localStorage['badge_type'];
 
       if (xhr.status == 200) {
         var response = xhr.responseText.split(';');
@@ -100,14 +120,7 @@ function update() {
 }
 
 function timeout() {
-  var update_interval;
   var prefs_updated;
-  var feeds_update_interval = 30 * 60 * 1000;
-
-  if (localStorage['update_interval'])
-    update_interval = localStorage['update_interval'] * 60 * 1000;
-  else
-    update_interval = 15 * 60 * 1000;
 
   if (localStorage['prefs_updated'])
     prefs_updated = localStorage['prefs_updated'];
@@ -116,7 +129,7 @@ function timeout() {
 
   var d = new Date();
 
-  if (d.getTime() > last_updated + update_interval ||
+  if (d.getTime() > last_updated + update_interval * 60 * 1000 ||
       prefs_updated != prefs_last_updated) {
     last_updated = d.getTime();
     try {
@@ -134,14 +147,28 @@ function is_newtab(url) {
 }
 
 function is_site_url(url) {
-    var site_url = localStorage['site_url'];
 	return url.indexOf(site_url) == 0;
 }
 
 function init() {
-  chrome.browserAction.onClicked.addListener(function() {
-    var site_url = localStorage['site_url'];
+  chrome.storage.onChanged.addListener(function(changes, namespace) {
+    for (key in changes) {
+      var storageChange = changes[key];
+      if (key == "site_url")
+        site_url = storageChange.newValue;
+      else if (key == "login")
+        login = storageChange.newValue;
+      else if (key == "update_interval")
+        update_interval = storageChange.newValue;
+      else if (key == "single_user")
+        single_user = storageChange.newValue;
+      else if (key == "badge_type")
+        badge_type = storageChange.newValue;
+    }
+    timeout();
+  });
 
+  chrome.browserAction.onClicked.addListener(function() {
     if (site_url) {
       // try to find already opened tab
       chrome.tabs.query({currentWindow: true}, function(tabs) {
@@ -161,7 +188,9 @@ function init() {
         if (!found_existing) {
           chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
             if (tabs[0].url && is_newtab(tabs[0].url)) {
-              chrome.tabs.update(tabs[0].id, {url: site_url});
+              chrome.tabs.create({url: site_url}, function(tab) {
+                chrome.tabs.remove(tabs[0].id);
+              });
             } else {
               chrome.tabs.create({url: site_url});
             }
@@ -181,5 +210,5 @@ function init() {
   chrome.alarms.onAlarm.addListener(function() {timeout();});
 }
 
-init();
+load_options();
 

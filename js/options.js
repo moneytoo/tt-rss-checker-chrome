@@ -3,39 +3,46 @@
 function save() {
   var s = $('status');
 
-  s.innerHTML = 'Options saved successfully.';
-
-  if (document.getElementById('site_url').value.length > 0)
-    localStorage['site_url'] = document.getElementById('site_url').value;
-  else {
-    s.innerHTML = 'Error: Site url cannot be blank.';
-    new Effect.Highlight(document.getElementById('site_url'));
-  }
-
-  if (document.getElementById('login').value.length > 0)
-    localStorage['login'] = document.getElementById('login').value;
-  else {
-    s.innerHTML = 'Error: Login cannot be blank.';
-    new Effect.Highlight(document.getElementById('login'));
-  }
-
+  var site_url = document.getElementById('site_url').value;
+  var login = document.getElementById('login').value;
   var update_interval = parseInt(document.getElementById('update_interval').value);
-
-  if (update_interval > 0)
-    localStorage['update_interval'] = document.getElementById('update_interval').value;
-  else {
-    s.innerHTML = 'Error: Update interval must be greater than zero.';
+  var single_user = document.getElementById('single_user').checked;
+  var badge_type = document.getElementById('badge_type').value;
+  
+  if (site_url.length < 1) {
+  	s.innerHTML = 'Error: Site url cannot be blank.';
+    new Effect.Highlight(document.getElementById('site_url'));
+    Element.show(s);
+  } else if (login.length < 1 && !single_user) {
+  	s.innerHTML = 'Error: Login cannot be blank.';
+    new Effect.Highlight(document.getElementById('login'));
+    Element.show(s);
+  } else if (update_interval < 1) {
+  	s.innerHTML = 'Error: Update interval must be greater than zero.';
     new Effect.Highlight(document.getElementById('update_interval'));
+    Element.show(s);
+  } else {
+	  chrome.storage.sync.set({
+	    site_url: site_url,
+	    login: login,
+	    update_interval: update_interval,
+	    single_user: single_user,
+	    badge_type: badge_type,
+	  }, function() {
+	  	var d = new Date();
+  		localStorage['prefs_updated'] = d.getTime();
+
+	    var status = document.getElementById('status');
+	    /*
+	    status.textContent = 'Options saved.';
+	    setTimeout(function() {
+	      status.textContent = '';
+	    }, 750);
+	    */
+	    s.innerHTML = 'Options saved successfully.';
+	    Element.show(s);
+	  });
   }
-
-  localStorage['single_user'] = (document.getElementById('single_user').checked) ? '1' : '0';
-  localStorage['badge_type'] = document.getElementById('badge_type').value;
-
-  var d = new Date();
-
-  localStorage['prefs_updated'] = d.getTime();
-
-  Element.show(s);
 
   return false;
 }
@@ -45,39 +52,26 @@ function single_user_toggle() {
 }
 
 function init() {
-  if (localStorage['site_url'])
-    document.getElementById('site_url').value = localStorage['site_url'];
-  else
-    document.getElementById('site_url').value = 'http://example.com/tt-rss/';
+  chrome.storage.sync.get({
+    site_url: 'http://example.com/tt-rss/',
+    login: 'admin',
+    update_interval: 5,
+    single_user: false,
+    badge_type: '1',
 
-  if (localStorage['login'])
-    document.getElementById('login').value = localStorage['login'];
-  else
-    document.getElementById('login').value = 'admin';
+  }, function(items) {
+    document.getElementById('site_url').value = items.site_url;
+    document.getElementById('login').value = items.login;
+    document.getElementById('update_interval').value = items.update_interval;
+    document.getElementById('single_user').checked = items.single_user;
+    document.getElementById('badge_type').value = items.badge_type;
 
-  if (localStorage['update_interval'])
-    document.getElementById('update_interval').value = localStorage['update_interval'];
-  else
-    document.getElementById('update_interval').value = '5';
-
-  if (localStorage['single_user'])
-    document.getElementById('single_user').checked = localStorage['single_user'] == '1';
-  else
-    document.getElementById('single_user').checked = false;
-
-  if (localStorage['badge_type'])
-    document.getElementById('badge_type').value = localStorage['badge_type'];
-  else
-    document.getElementById('badge_type').value = '1';
-
-  single_user_toggle();
+    single_user_toggle();
+  });
 
   var last_updated = $('last_updated');
-
   var d = new Date();
-
   d.setTime(localStorage['last_updated']);
-
   last_updated.innerHTML = d;
 }
 
