@@ -199,7 +199,9 @@ function init() {
 
       });
 
-    } // if (site_url)
+    } else {
+      chrome.runtime.openOptionsPage();
+    }
   });
 
   // TODO: Create smarter algorithm that sets `periodInMinutes` to
