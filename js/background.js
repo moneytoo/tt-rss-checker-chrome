@@ -32,7 +32,7 @@ function param_escape(arg) {
 }
 
 function update() {
-	//console.log('update');
+	console.log('update ' + new Date());
 
 	try {
 		var d = new Date();
@@ -128,6 +128,16 @@ function is_site_url(url) {
 	return url.indexOf(site_url) == 0;
 }
 
+function reset_alarm() {
+	chrome.alarms.clearAll(function() {
+		if (chrome.alarms.onAlarm.hasListener(update))
+			chrome.alarms.onAlarm.removeListener(update);
+
+		chrome.alarms.create("update", {periodInMinutes: update_interval});
+		chrome.alarms.onAlarm.addListener(update);
+	});
+}
+
 function init() {
 	chrome.storage.onChanged.addListener(function(changes, namespace) {
 		for (key in changes) {
@@ -136,9 +146,10 @@ function init() {
 				site_url = storageChange.newValue;
 			else if (key == "login")
 				login = storageChange.newValue;
-			else if (key == "update_interval")
+			else if (key == "update_interval") {
 				update_interval = storageChange.newValue;
-			else if (key == "single_user")
+				reset_alarm();
+			} else if (key == "single_user")
 				single_user = storageChange.newValue;
 			else if (key == "badge_type")
 				badge_type = storageChange.newValue;
@@ -147,7 +158,7 @@ function init() {
 	});
 
 	chrome.browserAction.onClicked.addListener(function() {
-		//console.log('click');
+		console.log('click');
 		if (site_url) {
 			// try to find already opened tab
 			chrome.tabs.query({currentWindow: true}, function(tabs) {
@@ -183,12 +194,10 @@ function init() {
 		}
 	});
 
-	// TODO: Create smarter algorithm that sets `periodInMinutes` to
-	// `feeds_update_interval` and updates the `alarm` object when extension
-	// preferences are saved.
-	update();
-	chrome.alarms.create({periodInMinutes: 1});
-	chrome.alarms.onAlarm.addListener(function() {update();});
+	if (site_url != null) {
+		update();
+		reset_alarm();
+	}
 }
 
 load_options();
