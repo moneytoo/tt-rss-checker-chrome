@@ -35,7 +35,6 @@ function update() {
 
 		xhr.open('POST', requestUrl, true);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.send(params);
 
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState == 4) {
@@ -96,6 +95,8 @@ function update() {
 				chrome.browserAction.setIcon(icon);
 			}
 		};
+
+		xhr.send(params);
 	} catch (e) {
 		console.warn(e);
 	}

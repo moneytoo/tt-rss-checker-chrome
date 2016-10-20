@@ -2,9 +2,9 @@
   "name": "Tiny Tiny RSS Checker",
   "background": {
     "scripts": ["js/background.js"],
-    "persistent": false
+    "persistent": true
   },
-  "version": "0.5.3.3",
+  "version": "0.5.3.4",
   "manifest_version": 2,
   "description": "This extension displays the number of unread articles in your Tiny Tiny RSS installation.",
   "options_ui": {
