@@ -64,18 +64,12 @@ function update() {
 				if (xhr.status == 200) {
 					var response = xhr.responseText.split(';');
 
-					var unread = parseInt(response[0]);
+					var unread = parseInt(response[0]) || 0;
 
-					if (isNaN(unread)) unread = 0;
-
-					var fresh;
+					var fresh = 0;
 
 					if (response.length == 2)
-						fresh = parseInt(response[1]);
-					else
-						fresh = 0;
-
-					if (isNaN(fresh)) fresh = 0;
+						fresh = parseInt(response[1]) || 0;
 
 					if (unread > 0) {
 						icon.path = 'images/alert.png';
@@ -84,7 +78,7 @@ function update() {
 						if (badge_type == '2' && fresh > 0) {
 							badge.text = fresh + '';
 							badge_color.color = [0, 200, 0, 255];
-						} else {
+						} else if (badge_type == '1') {
 							badge.text = unread + '';
 							badge_color.color = [255, 0, 0, 255];
 						}
@@ -106,8 +100,6 @@ function update() {
 					icon.path = 'images/error.png';
 					title.title = 'Error (%s) while updating'.replace('%s', xhr.status);
 				}
-
-				if (badge_type == '0') badge.text = '';
 
 				chrome.browserAction.setBadgeBackgroundColor(badge_color);
 				chrome.browserAction.setBadgeText(badge);
