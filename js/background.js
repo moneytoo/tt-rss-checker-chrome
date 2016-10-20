@@ -32,7 +32,7 @@ function param_escape(arg) {
 }
 
 function update() {
-	console.log('update ' + new Date());
+	//console.log('update ' + new Date());
 
 	try {
 		var d = new Date();
@@ -160,35 +160,27 @@ function init() {
 	chrome.browserAction.onClicked.addListener(function() {
 		console.log('click');
 		if (site_url) {
-			// try to find already opened tab
 			chrome.tabs.query({currentWindow: true}, function(tabs) {
-
-				var found_existing = false;
-
-				for (var i = 0, tab; tab = tabs[i]; i++) {
-					if (tab.url && is_site_url(tab.url)) {
-						chrome.tabs.update(tab.id, {highlighted: true});
-						update();
-						found_existing = true;
+				// try to find already opened tab
+				for (var i = 0; i < tabs.length; i++) {
+					if (tabs[i].url && is_site_url(tabs[i].url)) {
+						chrome.tabs.update(tabs[i].id, {active: true}, function(tab) {
+							update();
+						});
 						return;
 					}
 				}
 
-				// check if current tab is newtab (only if not updated yet)
-				if (!found_existing) {
-					chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
-						if (tabs[0].url && is_newtab(tabs[0].url)) {
-							chrome.tabs.create({url: site_url}, function(tab) {
-								chrome.tabs.remove(tabs[0].id);
-							});
-						} else {
-							chrome.tabs.create({url: site_url});
-						}
+				chrome.tabs.query({currentWindow: true, active: true}, function(tabs_active) {
+					var tab_to_remove;
+					if (tabs_active[0].url && is_newtab(tabs_active[0].url))
+						tab_to_remove = tabs_active[0].id;
+					chrome.tabs.create({url: site_url}, function(tab) {
+						if (tab_to_remove)
+							chrome.tabs.remove(tab_to_remove);
 					});
-				} // (if (!found_existing))
-
+				});
 			});
-
 		} else {
 			chrome.runtime.openOptionsPage();
 		}
