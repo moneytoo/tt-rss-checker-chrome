@@ -24,23 +24,12 @@ function load_options() {
 	});
 }
 
-function param_escape(arg) {
-	if (typeof encodeURIComponent != 'undefined')
-		return encodeURIComponent(arg);
-	else
-		return escape(arg);
-}
-
 function update() {
 	//console.log('update ' + new Date());
 
 	try {
-		var d = new Date();
-
-		if (single_user) login = 'admin';
-
 		var requestUrl = site_url + '/public.php';
-		var params = 'op=getUnread&fresh=1&login=' + param_escape(login);
+		var params = 'op=getUnread&fresh=1&login=' + encodeURIComponent(single_user ? 'admin' : login);
 
 		var xhr = new XMLHttpRequest();
 
@@ -92,7 +81,7 @@ function update() {
 						title.title = 'No unread articles';
 					}
 
-					localStorage['last_updated'] = d.getTime();
+					localStorage['last_updated'] = new Date().getTime();
 					localStorage['last_error'] = '';
 				} else {
 					localStorage['last_error'] = xhr.responseText;
@@ -150,7 +139,7 @@ function init() {
 	});
 
 	chrome.browserAction.onClicked.addListener(function() {
-		console.log('click');
+		//console.log('click');
 		if (site_url) {
 			chrome.tabs.query({currentWindow: true}, function(tabs) {
 				// try to find already opened tab
@@ -170,6 +159,7 @@ function init() {
 					chrome.tabs.create({url: site_url}, function(tab) {
 						if (tab_to_remove)
 							chrome.tabs.remove(tab_to_remove);
+						update();
 					});
 				});
 			});
@@ -185,4 +175,3 @@ function init() {
 }
 
 load_options();
-
