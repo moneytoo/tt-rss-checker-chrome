@@ -21,5 +21,10 @@
     "alarms",
     "storage",
     "http://*/*",
-    "https://*/*"]
+    "https://*/*"],
+  "applications": {
+    "gecko": {
+      "id": "tt-rss-checker-firefox@brouken.com"
+    }
+  }
 }
